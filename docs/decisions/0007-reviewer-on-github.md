@@ -8,7 +8,7 @@
 同じモデルが同じ文脈で書いたテストは、仕様ではなく実装の挙動をなぞりやすい（arXiv:2410.21136）。実装したセッションとは別の文脈で PR を評価する役が要る（docs/harness/model.md の「独立した評価役」）。
 
 ## 決定
-PR のレビューは、GitHub Actions 上の anthropics/claude-code-action で行う。手元の Claude Code のサブエージェントは使わない。
+PR のレビューは GitHub 上で、実装したセッションとは別の Claude が行う。手元の Claude Code のサブエージェントは使わない。方式（下記 A/B）はプランの確認後に決める。
 
 ## 理由
 - 実装したセッションと文脈が必ず分かれる
@@ -21,7 +21,12 @@ PR のレビューは、GitHub Actions 上の anthropics/claude-code-action で�
 - 「人の確認」が必要な変更種別に当たるか
 - 正しさと要件に関わる指摘に絞る。好みの指摘はしない（Claude Code Best practices）
 
+## 起動の条件（決定）
+PR を開いたとき（opened / reopened / ready_for_review）だけ。push ごとには動かさない。修正後に見直してほしいときは `@claude` で呼ぶ。
+
 ## 未決
-- 認証: `CLAUDE_CODE_OAUTH_TOKEN`（Pro/Max のサブスクリプション。`claude setup-token` で発行）か `ANTHROPIC_API_KEY`（従量課金）
-- 起動の条件: PR を開いたときと push ごとか、ラベルや `@claude` のときだけか
-- レビュー結果を必須チェックにするか（初期案: しない。マージは人が判断）
+- 方式と認証。契約しているプランを確認してから決める
+  - A. claude-code-action + `CLAUDE_CODE_OAUTH_TOKEN`（`claude setup-token` で発行。Pro・Max・Team・Enterprise で使え、プランの利用枠の中で動く。GitHub Actions の実行時間を使う）
+  - B. Claude Code Review（Team・Enterprise 向けの管理型サービス。複数のエージェントが見て、指摘を検証してから出す。プランとは別に使用量で課金。設定は組織の Owner が行い、指示は REVIEW.md に書く）
+  - 出典: https://code.claude.com/docs/en/github-actions 、 https://code.claude.com/docs/en/code-review （2026-10-26 確認）
+- レビュー結果を必須チェックにするか（初期案: しない。マージは人が判断。B のチェックは失敗にならない仕様）
