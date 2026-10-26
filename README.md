@@ -24,5 +24,6 @@
 | [0006](docs/decisions/0006-thin-api-boundary.md) | API の境界は持つ、中核は薄く | 提案 |
 | [0007](docs/decisions/0007-reviewer-on-github.md) | 独立した評価役は GitHub 上で動かす | 決定 |
 | [0008](docs/decisions/0008-ci-operation.md) | CI の運用 | 一部決定 |
+| [0009](docs/decisions/0009-github-pro-branch-protection.md) | GitHub Pro にして main をルールセットで守る | 決定 |
 
 未決の論点と順序は [`docs/decisions/open-questions.md`](docs/decisions/open-questions.md)。
