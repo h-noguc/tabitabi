@@ -1,0 +1,101 @@
+<title>tabitabi 技術スタック</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+JP:wght@400;500;700&family=Zen+Kaku+Gothic+New:wght@700&display=swap">
+<style>
+/* Layout: 単一カラムの設計書。図は横スクロール可の帯、表は要素ごとの出典を一覧 */
+:root{
+  --bg:#f6f7f8; --surface:#ffffff; --fg:#1d2329; --muted:#5b6670; --line:#d9dee3;
+  --accent:#1f6f78; --accent-soft:#e3f0f1;
+  --ok:#2f7d4a; --ok-soft:#e4f2e8; --mid:#8a6a12; --mid-soft:#f6efd9; --none:#8a3b3b; --none-soft:#f5e4e4;
+  --f-display:"Zen Kaku Gothic New","Hiragino Sans","Noto Sans JP",sans-serif;
+  --f-body:"IBM Plex Sans JP","Hiragino Sans","Noto Sans JP",system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#14191d; --surface:#1b2227; --fg:#e4e9ed; --muted:#9aa6b0; --line:#2e383f;
+  --accent:#6cc3cc; --accent-soft:#1d3336;
+  --ok:#7fcf98; --ok-soft:#1d3226; --mid:#e2c46a; --mid-soft:#352e19; --none:#e79a9a; --none-soft:#3a2323;
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#14191d; --surface:#1b2227; --fg:#e4e9ed; --muted:#9aa6b0; --line:#2e383f;
+  --accent:#6cc3cc; --accent-soft:#1d3336;
+  --ok:#7fcf98; --ok-soft:#1d3226; --mid:#e2c46a; --mid-soft:#352e19; --none:#e79a9a; --none-soft:#3a2323;
+  color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:15px;line-height:1.75}
+.wrap{max-width:960px;margin:0 auto;padding-block:40px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:40px}
+header{display:grid;gap:10px}
+.eyebrow{font-family:var(--f-mono);font-size:12px;letter-spacing:.08em;color:var(--accent)}
+h1{font-family:var(--f-display);font-size:clamp(26px,4vw,34px);line-height:1.3;margin:0;text-wrap:balance}
+h2{font-family:var(--f-display);font-size:20px;margin:0;text-wrap:balance}
+p{margin:0;max-width:65ch}
+.meta{display:flex;flex-wrap:wrap;gap:8px 16px;font-size:13px;color:var(--muted)}
+.meta a{color:var(--accent)}
+section{display:grid;gap:14px;min-width:0}
+.lead{color:var(--muted)}
+.loops{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin:0;padding:0;list-style:none}
+.loops li{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:14px 16px;display:grid;gap:4px;min-width:0}
+.loops b{font-family:var(--f-display);font-size:15px}
+.loops span{font-size:13.5px;color:var(--muted)}
+figure{margin:0;background:var(--surface);border:1px solid var(--line);border-radius:6px;display:grid;min-width:0}
+.diagram{overflow-x:auto;padding:16px}
+.diagram pre.mermaid{margin:0;min-width:640px;background:transparent;text-align:center}
+figcaption{border-top:1px solid var(--line);padding:10px 16px;font-size:13px;color:var(--muted)}
+.tag{font-family:var(--f-mono);font-size:12px;background:var(--accent-soft);color:var(--accent);padding:1px 6px;border-radius:3px}
+.table{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:6px}
+table{border-collapse:collapse;width:100%;min-width:620px;font-size:13.5px}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-weight:500;color:var(--muted);font-size:12px;letter-spacing:.04em}
+tr:last-child td{border-bottom:0}
+td.el{font-weight:700;white-space:nowrap}
+.pill{display:inline-block;font-family:var(--f-mono);font-size:11.5px;padding:1px 8px;border-radius:999px;white-space:nowrap}
+.ok{background:var(--ok-soft);color:var(--ok)}
+.mid{background:var(--mid-soft);color:var(--mid)}
+.none{background:var(--none-soft);color:var(--none)}
+.new{background:var(--accent-soft);color:var(--accent)}
+.later{background:transparent;color:var(--muted);border:1px solid var(--line)}
+dl.gloss{display:grid;grid-template-columns:minmax(120px,max-content) 1fr;gap:8px 16px;margin:0}
+dl.gloss dt{font-family:var(--f-mono);font-size:13px;font-weight:500;color:var(--accent)}
+dl.gloss dd{margin:0;font-size:14px;min-width:0}
+.layers{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin:0;padding:0;list-style:none}
+.layers li{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:14px 16px;display:grid;gap:4px}
+.layers b{font-family:var(--f-display)}
+.layers span{font-size:13.5px;color:var(--muted)}
+h3{font-size:15px;margin:8px 0 0}
+.legend{display:flex;flex-wrap:wrap;gap:8px 16px;font-size:13px;color:var(--muted);align-items:center}
+.notes{margin:0;padding-left:1.2em;display:grid;gap:8px;max-width:72ch}
+.notes li{padding-left:2px}
+.src{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+</style>
+<div class="wrap">
+<header>
+  <div class="eyebrow">tabitabi / docs / stack</div>
+  <h1>技術スタック</h1>
+  <p class="lead">アプリ・実行環境・ハーネスの3層に分けて、何を何で実現するかを並べた表。決まったものから埋めていく。</p>
+  <div class="meta"><span>更新：2026-10-26</span><span>ハーネスの要素は「ハーネスモデル」の図と対応</span></div>
+</header>
+<section>
+  <h2>3つの層</h2>
+  <ul class="layers">
+    <li><b>アプリ</b><span>tabitabi そのもののコード。言語、API、画面、地図、DB、認証。</span></li>
+    <li><b>実行環境</b><span>アプリを動かし、守る場所。ホスティング、DB の置き場、秘密情報、バックアップ、開発環境。</span></li>
+    <li><b>ハーネス</b><span>作り方を支える。Issue、仕様、テスト、CI、Claude Code の設定。</span></li>
+  </ul>
+  <p class="lead">下の層の選択が上の層を縛る。DB の置き場が決まるまで DB テストの形が決まらず、ホスティングが決まるまでデプロイと CI のつなぎ方が決まらない。</p>
+  <div class="legend"><span class="pill ok">決定</span> 判断記録あり <span class="pill new">推し</span> 推し、まだ記録していない <span class="pill mid">未決</span> 決める必要あり <span class="pill later">後で</span> 必要になってから</div>
+</section>
+<section><h2>アプリ</h2><div class="table"><table><thead><tr><th>領域</th><th>選択</th><th>状態</th></tr></thead><tbody><tr><td class="el">言語</td><td>TypeScript</td><td><span class="pill new">推し</span></td></tr><tr><td class="el">構成</td><td>npm workspaces のモノレポ</td><td><span class="pill new">推し</span></td></tr><tr><td class="el">API・入力検証</td><td>Hono + Zod</td><td><span class="pill new">推し</span> 0006</td></tr><tr><td class="el">画面</td><td>React + Vite（PWA）、データ取得は TanStack Query</td><td><span class="pill new">推し</span></td></tr><tr><td class="el">経路・ナビ</td><td>Google マップを開くリンク（Maps URLs）</td><td><span class="pill ok">決定</span> 0005</td></tr><tr><td class="el">地図表示・場所検索</td><td>Google か OSM 系か</td><td><span class="pill mid">未決</span> 論点3</td></tr><tr><td class="el">DB・ORM</td><td>Postgres + Drizzle。PostGIS は件数と機能次第</td><td><span class="pill new">推し</span></td></tr><tr><td class="el">認証</td><td>Better Auth、Supabase Auth など</td><td><span class="pill mid">未決</span> 論点4</td></tr><tr><td class="el">ネイティブ</td><td>Expo</td><td><span class="pill later">後で</span></td></tr></tbody></table></div></section>
+<section><h2>実行環境</h2><div class="table"><table><thead><tr><th>領域</th><th>選択</th><th>状態</th></tr></thead><tbody><tr><td class="el">APIと画面の配信先</td><td>Cloudflare Workers、Vercel、Fly.io など</td><td><span class="pill mid">未決</span> 論点4</td></tr><tr><td class="el">DBの置き場</td><td>Neon か Supabase か</td><td><span class="pill mid">未決</span> 論点4</td></tr><tr><td class="el">環境の分け方</td><td>本番・PRごとのプレビュー・手元</td><td><span class="pill mid">未決</span> 論点4と一緒</td></tr><tr><td class="el">バックアップ</td><td>特定の時点に戻せること。正本を持つので必須</td><td><span class="pill new">推し</span> 判断軸</td></tr><tr><td class="el">秘密情報</td><td>本番はホスティングの環境変数、CI は GitHub secrets、手元は 1Password</td><td><span class="pill new">推し</span></td></tr><tr><td class="el">エラー監視</td><td>ホスティングの標準機能から</td><td><span class="pill later">後で</span></td></tr><tr><td class="el">開発環境</td><td>Node 版を .node-version で固定。クラウド環境は起動時フックで依存を入れる</td><td><span class="pill new">推し</span></td></tr><tr><td class="el">CI</td><td>GitHub Actions</td><td><span class="pill ok">決定</span></td></tr></tbody></table></div></section>
+<section><h2>ハーネス</h2><div class="table"><table><thead><tr><th>要素</th><th>実現手段</th><th>状態</th></tr></thead><tbody><tr><td class="el">Issue</td><td>GitHub Issues と入力フォーム</td><td><span class="pill new">推し</span> パートナーの経路は未決</td></tr><tr><td class="el">仕様・AC</td><td>specs/*.md、先頭にメタ情報</td><td><span class="pill new">推し</span> AC の書き方は未決</td></tr><tr><td class="el">判断記録</td><td>docs/decisions/*.md</td><td><span class="pill ok">決定</span></td></tr><tr><td class="el">テスト</td><td>Vitest、PGlite、Playwright</td><td><span class="pill new">推し</span></td></tr><tr><td class="el">検査</td><td>型チェック、Vitest、ビルド、Lint・整形（Biome 推し）</td><td><span class="pill new">推し</span></td></tr><tr><td class="el">実行場所</td><td>GitHub Actions、Lefthook、編集直後の整形は Claude Code のフック</td><td><span class="pill new">推し</span></td></tr><tr><td class="el">人の確認</td><td>PR テンプレート、パスでラベル付け、人だけがマージ</td><td><span class="pill mid">未決</span> GitHub Pro にするか</td></tr><tr><td class="el">独立した評価役</td><td>GitHub Actions 上の claude-code-action</td><td><span class="pill ok">決定</span> 0007</td></tr><tr><td class="el">手順書</td><td>.claude/skills/</td><td><span class="pill ok">決定</span></td></tr><tr><td class="el">規約</td><td>.claude/rules/（パス指定）</td><td><span class="pill ok">決定</span></td></tr><tr><td class="el">AIへの指示</td><td>AGENTS.md を正本、CLAUDE.md はリンク</td><td><span class="pill new">推し</span></td></tr><tr><td class="el">権限・隔離</td><td>settings.json の deny、サンドボックス、通信先の制限</td><td><span class="pill new">推し</span></td></tr><tr><td class="el">フック</td><td>--no-verify 禁止、テスト変更の警告、整形、起動時の依存、会話ログの書き出し</td><td><span class="pill new">推し</span></td></tr><tr><td class="el">会話ログの保存先</td><td>別の非公開レポ／Postgres／Notion／OpenTelemetry</td><td><span class="pill mid">未決</span></td></tr><tr><td class="el">振り返り</td><td>/retro スキル → harness ラベルの Issue</td><td><span class="pill new">推し</span></td></tr><tr><td class="el">進捗メモ</td><td>—</td><td><span class="pill later">後で</span></td></tr></tbody></table></div></section>
+<section><h2>CI で決めること</h2><div class="table"><table><thead><tr><th>観点</th><th>たたき台</th><th>決められる時期</th></tr></thead><tbody><tr><td class="el">1. 何を検査するか</td><td>型チェック、Lint・整形、単体テスト、ビルド。DB とブラウザ操作は後で</td><td>今決められる</td></tr><tr><td class="el">2. いつ走らせるか</td><td>PR と main への push。重い検査は定期かラベル</td><td>今決められる</td></tr><tr><td class="el">3. 何を必須にするか</td><td>1 の4つ</td><td>GitHub Pro 次第</td></tr><tr><td class="el">4. 速さと費用</td><td>5分以内、キャッシュ、重い検査は分離</td><td>今決められる</td></tr><tr><td class="el">5. 秘密情報</td><td>読み取り権限のみ、本番の秘密と DB は渡さない</td><td>今決められる</td></tr><tr><td class="el">6. AIとの関わり</td><td>fix-ci の手順。テストを消さない、3回で止まる</td><td>今決められる</td></tr><tr><td class="el">7. 依存の更新と安全性</td><td>Dependabot か Renovate、Action の版を固定</td><td>好み</td></tr><tr><td class="el">8. デプロイとの関係</td><td>PR ごとにプレビュー、main で本番</td><td>論点4の後</td></tr></tbody></table></div></section>
+<section>
+  <h2>決める順番</h2>
+  <ol class="notes">
+    <li>GitHub Pro にするか。非公開レポのブランチ保護とルールセットは Pro 以上が必要（GitHub Docs で確認）。無料のままだと、CI が赤でもマージできる</li>
+    <li>論点3：地図表示と場所検索の提供元</li>
+    <li>論点4：DB・認証・ホスティング（アプリと実行環境にまたがる）</li>
+    <li>会話ログの保存先（3 の結果に乗せるか）</li>
+    <li>細かいもの：Biome、AC の書き方、レビューの認証と起動条件、Cursor も使うか</li>
+  </ol>
+</section>
+<section><h2>用語</h2><dl class="gloss"><dt>Hono</dt><dd>Web API を書く小さな枠組み。どのホスティングでも動き、API の型を画面やネイティブへ渡せる</dd><dt>Zod</dt><dd>データの形を宣言し、実行時に入口で確かめる。外から来た JSON を信用しないため</dd><dt>React</dt><dd>画面を部品の組み合わせで作る。ネイティブの Expo と同じ書き方</dd><dt>Vite</dt><dd>開発サーバーと本番ビルドを担う</dd><dt>PWA</dt><dd>Web アプリをホーム画面に置けるようにする Web 標準の仕組み</dd><dt>TanStack Query</dt><dd>API から取ったデータの保管・再取得・更新を引き受ける</dd><dt>Postgres</dt><dd>定番のオープンソースの DB。どのクラウドでも動き引っ越しやすい</dd><dt>Drizzle</dt><dd>TypeScript から型付きで DB を扱い、マイグレーションも作る</dd><dt>PostGIS</dt><dd>Postgres に位置の計算を足す拡張。「近くの場所」を速く探せる</dd><dt>PGlite</dt><dd>手元で動く軽量の Postgres。テスト用</dd><dt>claude-code-action</dt><dd>GitHub Actions 上で Claude Code を動かす公式の Action</dd></dl></section>
+</div>

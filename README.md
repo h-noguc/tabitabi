@@ -22,5 +22,6 @@
 | [0004](docs/decisions/0004-oss-as-exit-not-goal.md) | OSS・公開は出口であって目的にしない | 決定 |
 | [0005](docs/decisions/0005-own-db-coexist-with-google-maps.md) | 正本は独自DB、Google マップとはリンクで共存 | 決定 |
 | [0006](docs/decisions/0006-thin-api-boundary.md) | API の境界は持つ、中核は薄く | 提案 |
+| [0007](docs/decisions/0007-reviewer-on-github.md) | 独立した評価役は GitHub 上で動かす | 決定 |
 
 未決の論点と順序は [`docs/decisions/open-questions.md`](docs/decisions/open-questions.md)。
