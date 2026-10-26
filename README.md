@@ -25,5 +25,6 @@
 | [0007](docs/decisions/0007-reviewer-on-github.md) | 独立した評価役は GitHub 上で動かす | 決定 |
 | [0008](docs/decisions/0008-ci-operation.md) | CI の運用 | 一部決定 |
 | [0009](docs/decisions/0009-github-pro-branch-protection.md) | GitHub Pro にして main をルールセットで守る | 決定 |
+| [0010](docs/decisions/0010-data-model.md) | データモデル（初版） | 決定（分類は暫定） |
 
 未決の論点と順序は [`docs/decisions/open-questions.md`](docs/decisions/open-questions.md)。
