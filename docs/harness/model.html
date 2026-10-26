@@ -98,13 +98,22 @@ classDiagram
     進め方 小 or 大
   }
   class Spec["仕様（完成の約束）"] {
-    状態
+    状態 下書き/承認済み/実装済み/廃止
+    承認した版
+    目的
+    範囲
     範囲外
+    影響 データ/API/権限/画面/誰に見えるか
+    仮定と未決事項
+    手動確認の手順
   }
   class AC["受け入れ条件"] {
     AC-n
+    種類 正常/異常/境界
+    前提
     入力
     期待結果
+    確かめる段階 単体/API/E2E/手動
   }
   class Test["テスト"] {
     参照 specs/n AC-m
@@ -138,7 +147,9 @@ classDiagram
   Issue --> Issue : 関連
   Spec "1" *-- "1..*" AC
   Test "1..*" --> "1" AC : 検証
-  Human --> AC : 承認
+  Human --> Spec : 版を承認
+  Human --> AC : 期待結果を承認
+  Spec --> Decision : 関連
   Human --> Decision : 決める
   Human --> PR : 取り込む
   PR --> Spec : 実装
@@ -150,7 +161,7 @@ classDiagram
   Decision --> Decision : 置き換え
 </pre>
     </div>
-    <figcaption>Issueは「なぜ」、仕様は「何をもって完成か」を持つ。小さな変更は仕様を書かず、IssueにACを直接持たせる。ACは人が承認し、テストはACを参照する。実装したセッションとは別のコンテキストの評価役がPRを見る。<span class="tag">&lt;&lt;app依存&gt;&gt;</span> の中身は、データモデルやDBが決まってから埋める。</figcaption>
+    <figcaption>Issueは「なぜ」、仕様は「何をもって完成か」を持つ。小さな変更は仕様を書かず、IssueにACを直接持たせる。人は仕様を版ごとに承認し、仕様が変わったら承認し直す。ACの期待結果は人が承認し、テストは名前にACのIDを入れて参照する。実装したセッションとは別のコンテキストの評価役がPRを見る。<span class="tag">&lt;&lt;app依存&gt;&gt;</span> の中身は、データモデルやDBが決まってから埋める。</figcaption>
   </figure>
 </section>
 
@@ -251,11 +262,11 @@ classDiagram
       <tr><td class="el">仕様</td><td><span class="pill ok">原典で確認</span></td><td>Best practices（大きな機能はインタビューで仕様を書き、新しいセッションで実装）、spec-kit、Anthropic「Harness design」、cc-sdd</td></tr>
       <tr><td class="el">受け入れ条件</td><td><span class="pill ok">原典で確認</span></td><td>「Harness design」の sprint contract（実装前に完了条件と検証方法を合意）、「Effective harnesses」の機能リスト、cc-sdd の EARS 形式</td></tr>
       <tr><td class="el">テスト</td><td><span class="pill ok">原典で確認</span></td><td>Best practices（検証手段を渡すのが最重要）。論文：テストを添えるとコード生成の正解率が上がる（ASE 2024）</td></tr>
-      <tr><td class="el">ACのIDをテスト名に</td><td><span class="pill none">出典なし</span></td><td>近いのは「Effective harnesses」の機能ごとの passes フラグ、EARS の要求ID</td></tr>
+      <tr><td class="el">ACのIDをテスト名に</td><td><span class="pill none">出典なし</span></td><td>添付資料 §6・§11 由来で採用。同じ形の実践は見つからず、近いのは「Effective harnesses」の機能ごとの passes フラグ、cc-sdd の要求ID。最初はテスト名に書くだけにし、CI での漏れ検出は漏れが起きてから入れる</td></tr>
       <tr><td class="el">判断記録</td><td><span class="pill ok">原典で確認</span></td><td>Kosk「SDD疲れの処方箋 ── ADR 1枚」（却下した案を残す。CLAUDE.md からの参照は任意の強化策）。論文：LLMでADRの違反を検出できる（arXiv:2602.07609）</td></tr>
       <tr><td class="el">PR</td><td><span class="pill ok">原典で確認</span></td><td>論文：不採用のPRは大きく、変更ファイルが多く、CIを通っていない傾向（MSR 2026）</td></tr>
       <tr><td class="el">検査・実行場所</td><td><span class="pill ok">原典で確認</span></td><td>Best practices（テスト・lint・型を合否の信号に）、Carlini の C コンパイラ事例（回帰が続いたのでCIを厳格化）</td></tr>
-      <tr><td class="el">人の確認</td><td><span class="pill none">出典なし</span></td><td>変更種別ごとに人の確認を挟む形、CODEOWNERS をゲートにする形とも見つからず</td></tr>
+      <tr><td class="el">人の確認</td><td><span class="pill none">出典なし</span></td><td>添付資料 §12 由来で採用。同じ形の実践は見つからず。個人開発では CODEOWNERS が独立した承認にならないため、CI のラベル付け、PR テンプレートの確認項目、人だけがマージする運用で実現する。対象の変更種別はデータモデルと DB が決まってから確定</td></tr>
       <tr><td class="el">独立した評価役</td><td><span class="pill new">追加</span> <span class="pill ok">原典で確認</span></td><td>「Harness design」の Evaluator、Best practices の Writer/Reviewer。論文：LLMが作るテストは期待ではなく実際の挙動をなぞる</td></tr>
       <tr><td class="el">手順書</td><td><span class="pill ok">原典で確認</span></td><td>Best practices（.claude/skills に再利用する手順を置く）</td></tr>
       <tr><td class="el">規約</td><td><span class="pill ok">原典で確認</span></td><td>Claude Code Memory（パス指定のルールで、関係する作業のときだけ読ませる）</td></tr>
