@@ -1,0 +1,133 @@
+<title>tabitabi データモデル</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+JP:wght@400;500;700&family=Zen+Kaku+Gothic+New:wght@700&display=swap">
+<style>
+/* Layout: 単一カラムの設計書。図は横スクロール可の帯、表は要素ごとの出典を一覧 */
+:root{
+  --bg:#f6f7f8; --surface:#ffffff; --fg:#1d2329; --muted:#5b6670; --line:#d9dee3;
+  --accent:#1f6f78; --accent-soft:#e3f0f1;
+  --ok:#2f7d4a; --ok-soft:#e4f2e8; --mid:#8a6a12; --mid-soft:#f6efd9; --none:#8a3b3b; --none-soft:#f5e4e4;
+  --f-display:"Zen Kaku Gothic New","Hiragino Sans","Noto Sans JP",sans-serif;
+  --f-body:"IBM Plex Sans JP","Hiragino Sans","Noto Sans JP",system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#14191d; --surface:#1b2227; --fg:#e4e9ed; --muted:#9aa6b0; --line:#2e383f;
+  --accent:#6cc3cc; --accent-soft:#1d3336;
+  --ok:#7fcf98; --ok-soft:#1d3226; --mid:#e2c46a; --mid-soft:#352e19; --none:#e79a9a; --none-soft:#3a2323;
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#14191d; --surface:#1b2227; --fg:#e4e9ed; --muted:#9aa6b0; --line:#2e383f;
+  --accent:#6cc3cc; --accent-soft:#1d3336;
+  --ok:#7fcf98; --ok-soft:#1d3226; --mid:#e2c46a; --mid-soft:#352e19; --none:#e79a9a; --none-soft:#3a2323;
+  color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:15px;line-height:1.75}
+.wrap{max-width:960px;margin:0 auto;padding-block:40px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:40px}
+header{display:grid;gap:10px}
+.eyebrow{font-family:var(--f-mono);font-size:12px;letter-spacing:.08em;color:var(--accent)}
+h1{font-family:var(--f-display);font-size:clamp(26px,4vw,34px);line-height:1.3;margin:0;text-wrap:balance}
+h2{font-family:var(--f-display);font-size:20px;margin:0;text-wrap:balance}
+p{margin:0;max-width:65ch}
+.meta{display:flex;flex-wrap:wrap;gap:8px 16px;font-size:13px;color:var(--muted)}
+.meta a{color:var(--accent)}
+section{display:grid;gap:14px;min-width:0}
+.lead{color:var(--muted)}
+.loops{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin:0;padding:0;list-style:none}
+.loops li{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:14px 16px;display:grid;gap:4px;min-width:0}
+.loops b{font-family:var(--f-display);font-size:15px}
+.loops span{font-size:13.5px;color:var(--muted)}
+figure{margin:0;background:var(--surface);border:1px solid var(--line);border-radius:6px;display:grid;min-width:0}
+.diagram{overflow-x:auto;padding:16px}
+.diagram pre.mermaid{margin:0;min-width:640px;background:transparent;text-align:center}
+figcaption{border-top:1px solid var(--line);padding:10px 16px;font-size:13px;color:var(--muted)}
+.tag{font-family:var(--f-mono);font-size:12px;background:var(--accent-soft);color:var(--accent);padding:1px 6px;border-radius:3px}
+.table{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:6px}
+table{border-collapse:collapse;width:100%;min-width:620px;font-size:13.5px}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-weight:500;color:var(--muted);font-size:12px;letter-spacing:.04em}
+tr:last-child td{border-bottom:0}
+td.el{font-weight:700;white-space:nowrap}
+.pill{display:inline-block;font-family:var(--f-mono);font-size:11.5px;padding:1px 8px;border-radius:999px;white-space:nowrap}
+.ok{background:var(--ok-soft);color:var(--ok)}
+.mid{background:var(--mid-soft);color:var(--mid)}
+.none{background:var(--none-soft);color:var(--none)}
+.new{background:var(--accent-soft);color:var(--accent)}
+.legend{display:flex;flex-wrap:wrap;gap:8px 16px;font-size:13px;color:var(--muted);align-items:center}
+.notes{margin:0;padding-left:1.2em;display:grid;gap:8px;max-width:72ch}
+.notes li{padding-left:2px}
+.src{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+</style>
+<div class="wrap">
+<header>
+  <div class="eyebrow">tabitabi / docs / app</div>
+  <h1>データモデル</h1>
+  <p class="lead">tabitabi が何を、どんな形で覚えておくか。2人で共有する「行きたい／行った」を、メンバーごとの関心と訪問記録で表す。</p>
+  <div class="meta"><span>初版：2026-10-26</span><span>判断記録 0010</span><a href="https://claude.ai/code/session_01RRsWb1PMfgKNATkiZKYMQQ">議論したセッション</a></div>
+</header>
+<section>
+  <h2>クラス図</h2>
+  <figure>
+    <div class="diagram"><pre class="mermaid">
+classDiagram
+  direction LR
+  class Group["グループ"]
+  class Member["メンバー"]
+  class Place["場所"] {
+    名前
+    座標
+    住所
+    公開範囲 共有/自分だけ
+    営業状況 営業中/閉店/不明
+    カテゴリ
+    メモ 1つ・共有
+    削除日時 ゴミ箱
+  }
+  class Interest["関心（メンバーごと）"] {
+    行きたい/保留/もう行かない
+    お気に入り
+  }
+  class Visit["訪問記録"] {
+    日付 空欄可
+    メモ
+  }
+  class Context["コンテキスト"]
+  class List["リスト"]
+  class ExternalRef["外部参照"] {
+    提供元
+    外部ID
+  }
+  class Access["最寄り駅・出口"] {
+    最寄り駅
+    出口 近い順に3つと距離
+    出口からの徒歩ルート
+    計算元・計算日時
+  }
+  Group "1" *-- "2..*" Member
+  Group "1" *-- "0..*" Place
+  Member "1" --&gt; "0..*" Place : 持ち主
+  Member "1" --&gt; "0..*" Place : 最終更新
+  Member "1" *-- "0..*" Interest
+  Interest "0..*" --&gt; "1" Place
+  Place "1" *-- "0..*" Visit
+  Visit "0..*" --&gt; "1..*" Member : 参加者
+  Place "0..*" --&gt; "0..*" Context
+  Place "0..*" --&gt; "0..*" List
+  Place "1" *-- "0..*" ExternalRef
+  Place "1" *-- "0..1" Access
+</pre></div>
+    <figcaption>「行った」は箱として存在しない。訪問記録の参加者から計算する。関心はメンバーごと、営業状況は場所ごとに持つ。</figcaption>
+  </figure>
+</section>
+<section>
+  <h2>決めたこと</h2>
+  <div class="table"><table><thead><tr><th>論点</th><th>決定</th></tr></thead><tbody><tr><td class="el">2人分の見え方</td><td>メンバーごとの関心と訪問記録から計算する。2人とも行った、どちらかだけ行った、2人とも行きたい、片方だけ行きたい</td></tr><tr><td class="el">「行った」</td><td>印は持たない。そのメンバーが参加した訪問記録が1件以上あれば「行った」。行ったうえで「また行きたい」も立てられる</td></tr><tr><td class="el">訪問記録</td><td>訪問ごとに1件。日付（空欄可）・参加者・メモから始め、評価や写真は後で足す</td></tr><tr><td class="el">閉店</td><td>場所の営業状況。人ごとの関心とは分ける</td></tr><tr><td class="el">共有と自分だけ</td><td>場所ごとに選ぶ。共有の場所を外すと、追加した人（持ち主）だけの場所に戻る。相手の関心は消え、訪問記録は持ち主の側に残る</td></tr><tr><td class="el">削除</td><td>持ち主が削除するとゴミ箱に入り、戻せる</td></tr><tr><td class="el">二重登録</td><td>共有の中に同じ外部ID、または近い座標で似た名前があれば、登録時に「すでにあります」と出す</td></tr><tr><td class="el">最寄り駅・出口</td><td>座標から計算する付加情報。行く前に、どの出口から行くかを見て決めるため</td></tr><tr><td class="el">分類（暫定）</td><td>Notion の Places DB の形を引き継ぐ。カテゴリ7種（1つ）、コンテキスト6種（複数）、リスト、お気に入り</td></tr></tbody></table></div>
+</section>
+<section>
+  <h2>後で決めること</h2>
+  <ul class="notes">
+    <li>評価と写真。写真は保存先・費用・位置情報のメタデータを決めてから</li>
+    <li>分類を決めた経緯の確認（ローカルの会話ログにある）</li>
+    <li>重複を後からまとめる機能。登録時の防止をすり抜けた重複が出たら</li>
+  </ul>
+</section>
+</div>
