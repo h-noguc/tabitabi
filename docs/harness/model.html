@@ -1,0 +1,297 @@
+<title>tabitabi ハーネスモデル</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+JP:wght@400;500;700&family=Zen+Kaku+Gothic+New:wght@700&display=swap">
+<style>
+/* Layout: 単一カラムの設計書。図は横スクロール可の帯、表は要素ごとの出典を一覧 */
+:root{
+  --bg:#f6f7f8; --surface:#ffffff; --fg:#1d2329; --muted:#5b6670; --line:#d9dee3;
+  --accent:#1f6f78; --accent-soft:#e3f0f1;
+  --ok:#2f7d4a; --ok-soft:#e4f2e8; --mid:#8a6a12; --mid-soft:#f6efd9; --none:#8a3b3b; --none-soft:#f5e4e4;
+  --f-display:"Zen Kaku Gothic New","Hiragino Sans","Noto Sans JP",sans-serif;
+  --f-body:"IBM Plex Sans JP","Hiragino Sans","Noto Sans JP",system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#14191d; --surface:#1b2227; --fg:#e4e9ed; --muted:#9aa6b0; --line:#2e383f;
+  --accent:#6cc3cc; --accent-soft:#1d3336;
+  --ok:#7fcf98; --ok-soft:#1d3226; --mid:#e2c46a; --mid-soft:#352e19; --none:#e79a9a; --none-soft:#3a2323;
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#14191d; --surface:#1b2227; --fg:#e4e9ed; --muted:#9aa6b0; --line:#2e383f;
+  --accent:#6cc3cc; --accent-soft:#1d3336;
+  --ok:#7fcf98; --ok-soft:#1d3226; --mid:#e2c46a; --mid-soft:#352e19; --none:#e79a9a; --none-soft:#3a2323;
+  color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:15px;line-height:1.75}
+.wrap{max-width:960px;margin:0 auto;padding-block:40px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:40px}
+header{display:grid;gap:10px}
+.eyebrow{font-family:var(--f-mono);font-size:12px;letter-spacing:.08em;color:var(--accent)}
+h1{font-family:var(--f-display);font-size:clamp(26px,4vw,34px);line-height:1.3;margin:0;text-wrap:balance}
+h2{font-family:var(--f-display);font-size:20px;margin:0;text-wrap:balance}
+p{margin:0;max-width:65ch}
+.meta{display:flex;flex-wrap:wrap;gap:8px 16px;font-size:13px;color:var(--muted)}
+.meta a{color:var(--accent)}
+section{display:grid;gap:14px;min-width:0}
+.lead{color:var(--muted)}
+.loops{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin:0;padding:0;list-style:none}
+.loops li{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:14px 16px;display:grid;gap:4px;min-width:0}
+.loops b{font-family:var(--f-display);font-size:15px}
+.loops span{font-size:13.5px;color:var(--muted)}
+figure{margin:0;background:var(--surface);border:1px solid var(--line);border-radius:6px;display:grid;min-width:0}
+.diagram{overflow-x:auto;padding:16px}
+.diagram pre.mermaid{margin:0;min-width:640px;background:transparent;text-align:center}
+figcaption{border-top:1px solid var(--line);padding:10px 16px;font-size:13px;color:var(--muted)}
+.tag{font-family:var(--f-mono);font-size:12px;background:var(--accent-soft);color:var(--accent);padding:1px 6px;border-radius:3px}
+.table{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:6px}
+table{border-collapse:collapse;width:100%;min-width:620px;font-size:13.5px}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-weight:500;color:var(--muted);font-size:12px;letter-spacing:.04em}
+tr:last-child td{border-bottom:0}
+td.el{font-weight:700;white-space:nowrap}
+.pill{display:inline-block;font-family:var(--f-mono);font-size:11.5px;padding:1px 8px;border-radius:999px;white-space:nowrap}
+.ok{background:var(--ok-soft);color:var(--ok)}
+.mid{background:var(--mid-soft);color:var(--mid)}
+.none{background:var(--none-soft);color:var(--none)}
+.new{background:var(--accent-soft);color:var(--accent)}
+.legend{display:flex;flex-wrap:wrap;gap:8px 16px;font-size:13px;color:var(--muted);align-items:center}
+.notes{margin:0;padding-left:1.2em;display:grid;gap:8px;max-width:72ch}
+.notes li{padding-left:2px}
+.src{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+</style>
+
+<div class="wrap">
+<header>
+  <div class="eyebrow">tabitabi / docs / harness</div>
+  <h1>開発ハーネスのモデル</h1>
+  <p class="lead">AIに実装を任せながら、仕様どおりに作れているかを確かめ、失敗を次の手順と検査に戻すための要素と関係。アプリの中身に依存しない骨格だけを描いています。</p>
+  <div class="meta">
+    <span>状態：下書き（2026-10-26）</span>
+    <span>出典：公式資料・日本語記事・論文の調査3件</span>
+    <a href="https://claude.ai/code/session_01RRsWb1PMfgKNATkiZKYMQQ">議論したセッション</a>
+  </div>
+</header>
+
+<section>
+  <h2>3つの流れ</h2>
+  <ul class="loops">
+    <li><b>作る</b><span>Issue → 仕様とAC → テスト → PR。検査と人の確認を通って取り込む。</span></li>
+    <li><b>AIを動かす</b><span>指示・規約・手順書を読み、権限とフックの枠の中で作業する。会話ログは外へ書き出す。</span></li>
+    <li><b>育てる</b><span>振り返りで、繰り返した失敗だけを規約・手順書・検査・フックに戻す。</span></li>
+  </ul>
+</section>
+
+<section>
+  <h2>1. 作る：仕様から取り込みまで</h2>
+  <figure>
+    <div class="diagram">
+<pre class="mermaid">
+classDiagram
+  direction LR
+  class Human["判断者"]
+  class Issue["Issue（なぜ）"] {
+    利用者と場面
+    困りごと
+    得たい結果
+    要件を決める人
+    きっかけ
+    今やる理由
+    進め方 小 or 大
+  }
+  class Spec["仕様（完成の約束）"] {
+    状態
+    範囲外
+  }
+  class AC["受け入れ条件"] {
+    AC-n
+    入力
+    期待結果
+  }
+  class Test["テスト"] {
+    参照 specs/n AC-m
+  }
+  class PR["PR"] {
+    AC とテストの対応
+    未確認事項
+  }
+  class Check["検査"] {
+    &lt;&lt;app依存&gt;&gt;
+    コマンド
+    必須か
+  }
+  class Runner["実行場所"] {
+    CI
+    手元のフック
+  }
+  class Gate["人の確認"] {
+    &lt;&lt;app依存&gt;&gt;
+    対象の変更種別
+  }
+  class Reviewer["独立した評価役"] {
+    新しいコンテキスト
+  }
+  class Decision["判断記録"] {
+    却下した案
+    置き換え先
+  }
+  Issue "1" --> "0..1" Spec : 大きな変更
+  Issue "1" *-- "0..*" AC : 小さな変更
+  Issue --> Issue : 関連
+  Spec "1" *-- "1..*" AC
+  Test "1..*" --> "1" AC : 検証
+  Human --> AC : 承認
+  Human --> Decision : 決める
+  Human --> PR : 取り込む
+  PR --> Spec : 実装
+  PR --> Test : 追加・変更
+  PR --> Check : 結果を受ける
+  Check --> Runner : で実行
+  Gate --> PR : 変更種別で要求
+  Reviewer --> PR : 実装者と別に評価
+  Decision --> Decision : 置き換え
+</pre>
+    </div>
+    <figcaption>Issueは「なぜ」、仕様は「何をもって完成か」を持つ。小さな変更は仕様を書かず、IssueにACを直接持たせる。ACは人が承認し、テストはACを参照する。実装したセッションとは別のコンテキストの評価役がPRを見る。<span class="tag">&lt;&lt;app依存&gt;&gt;</span> の中身は、データモデルやDBが決まってから埋める。</figcaption>
+  </figure>
+</section>
+
+<section>
+  <h2>2. AIを動かす：読むもの・縛るもの・残すもの</h2>
+  <figure>
+    <div class="diagram">
+<pre class="mermaid">
+classDiagram
+  direction LR
+  class Instruction["AIへの指示 AGENTS.md"] {
+    目次として短く
+  }
+  class Rule["規約"] {
+    適用パス
+  }
+  class Playbook["手順書 skills"]
+  class Decision["判断記録"]
+  class Session["AIセッション"] {
+    id
+  }
+  class Progress["進捗メモ"]
+  class Permission["権限・隔離"] {
+    &lt;&lt;app依存&gt;&gt;
+    deny
+    サンドボックス
+  }
+  class Hook["フック"] {
+    決定論的に強制
+  }
+  class Check["検査"]
+  class Transcript["会話ログ"] {
+    秘密を除去
+  }
+  class LogStore["ログ保存先"]
+  class PR["PR"]
+  Instruction --> Rule : 参照
+  Instruction --> Playbook : 参照
+  Instruction --> Decision : 1行で参照
+  Session --> Instruction : 読む
+  Session --> Playbook : に従う
+  Session --> Progress : 読み書き
+  Session --> PR : 作成
+  Session ..> Decision : 起案
+  Permission --> Session : 制限
+  Hook --> Session : 介入
+  Hook --> Check : 回避を禁止
+  Hook --> Transcript : 書き出し
+  Transcript --> LogStore : 保存
+  Transcript --> Session : の記録
+  Decision ..> Session : 議論の出典
+</pre>
+    </div>
+    <figcaption>指示ファイルは中身を抱えず、規約・手順書・判断記録への目次にする。お願いで済まないこと（検査の回避、テストの書き換え、秘密の読み取り）は、フックと権限で機械的に止める。判断記録はセッションIDで会話ログに戻れる。</figcaption>
+  </figure>
+</section>
+
+<section>
+  <h2>3. 育てる：振り返りから戻す先</h2>
+  <figure>
+    <div class="diagram">
+<pre class="mermaid">
+classDiagram
+  direction LR
+  class Retro["振り返り"] {
+    2〜3回繰り返したものだけ昇格
+  }
+  class Transcript["会話ログ"]
+  class PR["PR"]
+  class Rule["規約"]
+  class Playbook["手順書"]
+  class Check["検査"]
+  class Hook["フック"]
+  Retro --> Transcript : 材料
+  Retro --> PR : 対象
+  Retro ..> Rule : 改善・剪定
+  Retro ..> Playbook : 改善
+  Retro ..> Check : 自動化
+  Retro ..> Hook : 強制へ昇格
+</pre>
+    </div>
+    <figcaption>点線は「提案して人が承認したら変える」。1回の失敗ですぐルールにしない。不要になった規約は剪定する。</figcaption>
+  </figure>
+</section>
+
+<section>
+  <h2>要素と出典</h2>
+  <div class="legend">
+    <span><span class="pill ok">原典で確認</span> 本文または論文の要旨を開いて確認</span>
+    <span><span class="pill none">出典なし</span> 自分たちの設計判断</span>
+    <span><span class="pill new">追加</span> 調査で加えた要素</span>
+  </div>
+  <div class="table">
+  <table>
+    <thead><tr><th>要素</th><th>状況</th><th>主な出典と、言っていること</th></tr></thead>
+    <tbody>
+      <tr><td class="el">Issue</td><td><span class="pill ok">原典で確認</span></td><td>Claude Code Best practices の fix-issue スキル例が Issue の読み込みから始まる。GitHub Docs（Copilot cloud agent）は Issue をプロンプトとして書き、受け入れ条件と変更するファイルを含めるよう勧める</td></tr>
+      <tr><td class="el">仕様</td><td><span class="pill ok">原典で確認</span></td><td>Best practices（大きな機能はインタビューで仕様を書き、新しいセッションで実装）、spec-kit、Anthropic「Harness design」、cc-sdd</td></tr>
+      <tr><td class="el">受け入れ条件</td><td><span class="pill ok">原典で確認</span></td><td>「Harness design」の sprint contract（実装前に完了条件と検証方法を合意）、「Effective harnesses」の機能リスト、cc-sdd の EARS 形式</td></tr>
+      <tr><td class="el">テスト</td><td><span class="pill ok">原典で確認</span></td><td>Best practices（検証手段を渡すのが最重要）。論文：テストを添えるとコード生成の正解率が上がる（ASE 2024）</td></tr>
+      <tr><td class="el">ACのIDをテスト名に</td><td><span class="pill none">出典なし</span></td><td>近いのは「Effective harnesses」の機能ごとの passes フラグ、EARS の要求ID</td></tr>
+      <tr><td class="el">判断記録</td><td><span class="pill ok">原典で確認</span></td><td>Kosk「SDD疲れの処方箋 ── ADR 1枚」（却下した案を残す。CLAUDE.md からの参照は任意の強化策）。論文：LLMでADRの違反を検出できる（arXiv:2602.07609）</td></tr>
+      <tr><td class="el">PR</td><td><span class="pill ok">原典で確認</span></td><td>論文：不採用のPRは大きく、変更ファイルが多く、CIを通っていない傾向（MSR 2026）</td></tr>
+      <tr><td class="el">検査・実行場所</td><td><span class="pill ok">原典で確認</span></td><td>Best practices（テスト・lint・型を合否の信号に）、Carlini の C コンパイラ事例（回帰が続いたのでCIを厳格化）</td></tr>
+      <tr><td class="el">人の確認</td><td><span class="pill none">出典なし</span></td><td>変更種別ごとに人の確認を挟む形、CODEOWNERS をゲートにする形とも見つからず</td></tr>
+      <tr><td class="el">独立した評価役</td><td><span class="pill new">追加</span> <span class="pill ok">原典で確認</span></td><td>「Harness design」の Evaluator、Best practices の Writer/Reviewer。論文：LLMが作るテストは期待ではなく実際の挙動をなぞる</td></tr>
+      <tr><td class="el">手順書</td><td><span class="pill ok">原典で確認</span></td><td>Best practices（.claude/skills に再利用する手順を置く）</td></tr>
+      <tr><td class="el">規約</td><td><span class="pill ok">原典で確認</span></td><td>Claude Code Memory（パス指定のルールで、関係する作業のときだけ読ませる）</td></tr>
+      <tr><td class="el">AIへの指示</td><td><span class="pill ok">原典で確認</span></td><td>Memory（200行未満が目安）。論文：指示は守られるが、リポジトリの概要説明は成功率に効かずコストが2割増える</td></tr>
+      <tr><td class="el">権限・隔離</td><td><span class="pill new">追加</span> <span class="pill ok">原典で確認</span></td><td>Anthropic「Beyond permission prompts」（ファイルとネットワークの両方を隔離）。論文：ツール経由のインジェクションで6種すべてのエージェントでコマンド実行に到達</td></tr>
+      <tr><td class="el">フック</td><td><span class="pill ok">原典で確認</span></td><td>Best practices（CLAUDE.md は助言、フックは決定論的）</td></tr>
+      <tr><td class="el">進捗メモ</td><td><span class="pill new">追加</span> <span class="pill ok">原典で確認</span></td><td>「Effective harnesses」の進捗ファイル、C コンパイラ事例、Context engineering 記事の NOTES.md</td></tr>
+      <tr><td class="el">会話ログ</td><td><span class="pill ok">原典で確認</span></td><td>Hooks ドキュメント（transcript_path を受け取れる。ただし直近のターンが欠けることがあり、SessionEnd は1.5秒しかない）。DBに入れる例はなく、ファイル保存が主流</td></tr>
+      <tr><td class="el">振り返り</td><td><span class="pill ok">原典で確認</span></td><td>Best practices（CLAUDE.md を定期的に剪定）。hty1123445_a（1回の不満は無視、2〜3回繰り返したら改善候補、採用は必ず人が判断）</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<section>
+  <h2>研究から引いた注意</h2>
+  <ul class="notes">
+    <li>AIがテストを書き換えて通す行動は、ベンチマークで繰り返し観測されている。テストファイルの変更は検出して、理由を求める。<span class="src">ImpossibleBench arXiv:2510.20270、EvilGenie arXiv:2511.21654</span></li>
+    <li>「TDDでやれ」と手順だけを指示すると、回帰がかえって増えた。どのテストが関係するかという情報を渡す方が効いた。<span class="src">TDAD arXiv:2603.17973</span></li>
+    <li>指示ファイルの効果は研究で割れている。所要時間とトークンが減った研究と、成功率が上がらずコストが増えた研究がある。中身は「このレポ特有の約束」に絞る。<span class="src">arXiv:2601.20404 / arXiv:2602.11988</span></li>
+    <li>マージされたかどうかは品質の指標にならない。不採用の多くはエージェントの誤り以外の理由だった。<span class="src">arXiv:2605.22534（MSR 2026）</span></li>
+  </ul>
+</section>
+
+<section>
+  <h2>採用を保留したもの</h2>
+  <div class="table">
+  <table>
+    <thead><tr><th>候補</th><th>保留する理由</th><th>見直すとき</th></tr></thead>
+    <tbody>
+      <tr><td class="el">Eval セット</td><td>個人開発の初期には過剰</td><td>AIの失敗が同じ形で繰り返したとき</td></tr>
+      <tr><td class="el">多段のハーネス</td><td>計画役・実装役・評価役を分ける構成は、単独実行より時間と費用が一桁以上かかる</td><td>1セッションで完成しない大きな機能が出たとき</td></tr>
+      <tr><td class="el">spec-kit 一式の手順</td><td>冗長さと「SDD疲れ」の指摘がある。小さな変更は仕様なしで進める</td><td>—</td></tr>
+      <tr><td class="el">マージ率を指標にする</td><td>品質を表さない</td><td>採用しない</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+</div>
