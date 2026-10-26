@@ -1,10 +1,10 @@
 # 0006 API の境界は持つ、中核は薄く
 
-状態: 提案
+状態: 決定（2026-10-26、0011 で確定）
 判断者: 自分
 議論: https://claude.ai/code/session_01RRsWb1PMfgKNATkiZKYMQQ
 
-## 決定（案）
+## 決定
 - 画面は必ず API（Hono + Zod）を通して DB に触れる
 - 中核（純粋関数）に置くのは、実際の業務ルールだけ:
   - want↔been の遷移と訪問記録

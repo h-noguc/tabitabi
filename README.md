@@ -21,10 +21,11 @@
 | [0003](docs/decisions/0003-web-first-then-native.md) | Web で出し、本格運用でネイティブ化 | 決定 |
 | [0004](docs/decisions/0004-oss-as-exit-not-goal.md) | OSS・公開は出口であって目的にしない | 決定 |
 | [0005](docs/decisions/0005-own-db-coexist-with-google-maps.md) | 正本は独自DB、Google マップとはリンクで共存 | 決定 |
-| [0006](docs/decisions/0006-thin-api-boundary.md) | API の境界は持つ、中核は薄く | 提案 |
+| [0006](docs/decisions/0006-thin-api-boundary.md) | API の境界は持つ、中核は薄く | 決定 |
 | [0007](docs/decisions/0007-reviewer-on-github.md) | 独立した評価役は GitHub 上で動かす | 決定 |
 | [0008](docs/decisions/0008-ci-operation.md) | CI の運用 | 一部決定 |
 | [0009](docs/decisions/0009-github-pro-branch-protection.md) | GitHub Pro にして main をルールセットで守る | 決定 |
 | [0010](docs/decisions/0010-data-model.md) | データモデル（初版） | 決定（分類は暫定） |
+| [0011](docs/decisions/0011-adopt-recommended-stack.md) | 論点になっていない技術スタックは「推し」で確定する | 決定 |
 
 未決の論点と順序は [`docs/decisions/open-questions.md`](docs/decisions/open-questions.md)。
